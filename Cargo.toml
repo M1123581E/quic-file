@@ -2,9 +2,32 @@
 name = "quic-file"
 version = "0.1.0"
 edition = "2018"
+include = [
+    "/*.md",
+    "/*.toml",
+    "/CODEOWNERS",
+    "/COPYING",
+    "/benches",
+    "/deps/boringssl/**/*.[chS]",
+    "/deps/boringssl/**/*.asm",
+    "/deps/boringssl/src/**/*.cc",
+    "/deps/boringssl/**/CMakeLists.txt",
+    "/deps/boringssl/**/sources.cmake",
+    "/deps/boringssl/LICENSE",
+    "/examples",
+    "/include",
+    "/quiche.svg",
+    "/src",
+]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 cmd_lib = "1.1.0"
+quiche = "0.9.0"
+ring = "0.16"
+mio = "0.6"
+url = "1"
+log = { version = "0.4", features = ["std"] }
 
