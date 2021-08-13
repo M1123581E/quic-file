@@ -180,8 +180,8 @@ fn main() {
                         println!("recv() would block");
                         break 'read;
                     }
-
-                    println!("recv() failed: {:?}", e);
+                    println!("recv() fail");
+                    panic!("recv() failed: {:?}", e);
                 },
             };
 
