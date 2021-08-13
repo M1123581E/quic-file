@@ -331,7 +331,10 @@ fn main() {
                         if s == 4 {
                             let info = match str::from_utf8(&buf[..read]) {
                                 Ok(v) => v,
-                                Err(e) => println!("Invalid UTF-8 sequence: {}", e),
+                                Err(e) => {
+                                    println!("Invalid UTF-8 sequence");
+                                    panic!("Invalid UTF-8 sequence: {}", e)
+                                },
                             };
                             let v: Vec<&str> = info.split(":").collect();
                             let file_name = v[0];
