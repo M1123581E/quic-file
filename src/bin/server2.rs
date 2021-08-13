@@ -303,12 +303,12 @@ fn main() {
                 Ok(v) => v,
 
                 Err(e) => {
-                    error!("{} recv failed: {:?}", client.conn.trace_id(), e);
+                    println!("{} recv failed: {:?}", client.conn.trace_id(), e);
                     continue 'read;
                 },
             };
 
-            debug!("{} processed {} bytes", client.conn.trace_id(), read);
+            println!("{} processed {} bytes", client.conn.trace_id(), read);
 
             if client.conn.is_in_early_data() || client.conn.is_established() {
                 // Handle writable streams.
@@ -323,7 +323,7 @@ fn main() {
                 for s in client.conn.readable() {
                     while let Ok((read, fin)) =
                     client.conn.stream_recv(s, &mut buf) {
-                        debug!(
+                        println!(
                             "{} received {} bytes",
                             client.conn.trace_id(),
                             read
@@ -331,7 +331,7 @@ fn main() {
                         if s == 4 {
                             let info = match str::from_utf8(&buf[..read]) {
                                 Ok(v) => v,
-                                Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
+                                Err(e) => println!("Invalid UTF-8 sequence: {}", e),
                             };
                             let v: Vec<&str> = info.split(":").collect();
                             let file_name = v[0];
@@ -444,6 +444,8 @@ fn main() {
 
                         // handle_stream(client, s, stream_buf, "examples/root");
                     }
+
+
                 }
             }
         }
@@ -457,12 +459,12 @@ fn main() {
                     Ok(v) => v,
 
                     Err(quiche::Error::Done) => {
-                        debug!("{} done writing", client.conn.trace_id());
+                        println!("{} done writing", client.conn.trace_id());
                         break;
                     },
 
                     Err(e) => {
-                        error!("{} send failed: {:?}", client.conn.trace_id(), e);
+                        println!("{} send failed: {:?}", client.conn.trace_id(), e);
                         client.conn.close(false, 0x1, b"fail").ok();
                         break;
                     },
@@ -470,7 +472,7 @@ fn main() {
 
                 if let Err(e) = socket.send_to(&out[..write], &send_info.to) {
                     if e.kind() == std::io::ErrorKind::WouldBlock {
-                        debug!("send() would block");
+                        println!("send() would block");
                         break;
                     }
 

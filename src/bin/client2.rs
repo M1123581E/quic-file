@@ -140,14 +140,14 @@ fn main() {
 
     while let Err(e) = socket.send_to(&out[..write], &send_info.to) {
         if e.kind() == std::io::ErrorKind::WouldBlock {
-            debug!("send() would block");
+            println!("send() would block");
             continue;
         }
 
-        panic!("send() failed: {:?}", e);
+        println!("send() failed: {:?}", e);
     }
 
-    debug!("written {}", write);
+    println!("written {}", write);
 
     let req_start = std::time::Instant::now();
 
@@ -177,15 +177,15 @@ fn main() {
                     // There are no more UDP packets to read, so end the read
                     // loop.
                     if e.kind() == std::io::ErrorKind::WouldBlock {
-                        debug!("recv() would block");
+                        println!("recv() would block");
                         break 'read;
                     }
 
-                    panic!("recv() failed: {:?}", e);
+                    println!("recv() failed: {:?}", e);
                 },
             };
 
-            debug!("got {} bytes", len);
+            println!("got {} bytes", len);
 
             let recv_info = quiche::RecvInfo { from };
 
@@ -194,15 +194,15 @@ fn main() {
                 Ok(v) => v,
 
                 Err(e) => {
-                    error!("recv failed: {:?}", e);
+                    println!("recv failed: {:?}", e);
                     continue 'read;
                 },
             };
 
-            debug!("processed {} bytes", read);
+            println!("processed {} bytes", read);
         }
 
-        info!("done reading");
+        println!("done reading");
 
         if conn.is_closed() {
             println!("connection closed, {:?}", conn.stats());
@@ -211,7 +211,7 @@ fn main() {
 
         // Send an HTTP request as soon as the connection is established.
         if conn.is_established() && req_sent <= 0 {
-            info!("sending file {}", url.path());
+            println!("sending file {}", url.path());
 
             sendFileMeta(&url, &mut conn);
             //sendFile0(&url, &mut partial_responses, &mut conn);
@@ -226,7 +226,7 @@ fn main() {
         // Process all readable streams.
         for s in conn.readable() {
             while let Ok((read, fin)) = conn.stream_recv(s, &mut buf) {
-                debug!("received {} bytes", read);
+                println!("received {} bytes", read);
 
                 let stream_buf = &buf[..read];
 
@@ -276,7 +276,7 @@ fn main() {
                 Ok(v) => v,
 
                 Err(quiche::Error::Done) => {
-                    debug!("done writing");
+                    println!("done writing");
                     break;
                 },
 
@@ -290,18 +290,18 @@ fn main() {
 
             if let Err(e) = socket.send_to(&out[..write], &send_info.to) {
                 if e.kind() == std::io::ErrorKind::WouldBlock {
-                    debug!("send() would block");
+                    println!("send() would block");
                     break;
                 }
 
-                panic!("send() failed: {:?}", e);
+                println!("send() failed: {:?}", e);
             }
 
-            debug!("written {}", write);
+            println!("written {}", write);
         }
 
         if conn.is_closed() {
-            info!("connection closed, {:?}", conn.stats());
+            println!("connection closed, {:?}", conn.stats());
             break;
         }
     }
@@ -328,7 +328,7 @@ fn sendFileMeta(url: &Url, mut conn: &mut Pin<Box<Connection>>) {
         Err(quiche::Error::Done) => 0,
 
         Err(e) => {
-            error!("{} stream send failed {:?}", conn.trace_id(), e);
+            println!("{} stream send failed {:?}", conn.trace_id(), e);
             return;
         },
     };
