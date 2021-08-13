@@ -38,7 +38,7 @@ use url::Url;
 
 
 const MAX_DATAGRAM_SIZE: usize = 1350;
-const CHUNK_SIZE: usize = 10;
+const CHUNK_SIZE: usize = 100;
 
 
 
